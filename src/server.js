@@ -1,11 +1,12 @@
 import express from "express";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
+import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Enable parsing JSON bodies
+// Enable parsing JSON bodies (only once)
 app.use(express.json());
 
 // Get the file path of url from the current module
@@ -26,21 +27,31 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public", "index.html"));
 });
 
-// Basic auth routes to satisfy frontend requests
-app.post("/auth/login", (req, res) => {
-  res.json({ token: "test-token-123" });
-});
-
-app.post("/auth/register", (req, res) => {
-  res.json({ token: "test-token-123" });
-});
+// Auth routes
+app.use("/auth", authRoutes);
 
 // Basic todo routes
 app.get("/todos", (req, res) => {
   res.json([]);
 });
 
-// Start the server on a different port to avoid conflicts
-app.listen(3000, () => {
-  console.log(`Server is running on http://localhost:3000`);
+app.post("/todos", (req, res) => {
+  res.json({ id: 1, task: req.body.task, completed: false });
+});
+
+app.put("/todos/:id", (req, res) => {
+  res.json({
+    id: Number(req.params.id),
+    task: req.body.task,
+    completed: req.body.completed,
+  });
+});
+
+app.delete("/todos/:id", (req, res) => {
+  res.json({ success: true });
+});
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
