@@ -1,57 +1,33 @@
-import express from "express";
-import path, { dirname } from "path";
-import { fileURLToPath } from "url";
-import authRoutes from "./routes/authRoutes.js";
+import express from 'express'
+import path, { dirname } from 'path'
+import { fileURLToPath } from 'url'
+import authRoutes from './routes/authRoutes.js'
+import todoRoutes from './routes/todoRoutes.js'
+import authMiddleware from './middleware/authMiddleware.js'
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+const app = express()
+const PORT = process.env.PORT || 5003
 
-// Enable parsing JSON bodies (only once)
-app.use(express.json());
+// Get the file path from the URL of the current module
+const __filename = fileURLToPath(import.meta.url)
+// Get the directory name from the file path
+const __dirname = dirname(__filename)
 
-// Get the file path of url from the current module
-const __filename = fileURLToPath(import.meta.url);
-// Get directory name from file path
-const __dirname = dirname(__filename);
+// Middleware
+app.use(express.json())
+// Serves the HTML file from the /public directory
+// Tells express to serve all files from the public folder as static assets / file. Any requests for the css files will be resolved to the public directory.
+app.use(express.static(path.join(__dirname, '../public')))
 
-// Debug route to test server response
-app.get("/test", (req, res) => {
-  res.send("Server is working!");
-});
+// Serving up the HTML file from the /public directory
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'))
+})
 
-// Serve the index.html file from the public directory
-app.use(express.static(path.join(__dirname, "../public")));
+// Routes
+app.use('/auth', authRoutes)
+app.use('/todos', authMiddleware, todoRoutes)
 
-// Serve index.html for root path
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public", "index.html"));
-});
-
-// Auth routes
-app.use("/auth", authRoutes);
-
-// Basic todo routes
-app.get("/todos", (req, res) => {
-  res.json([]);
-});
-
-app.post("/todos", (req, res) => {
-  res.json({ id: 1, task: req.body.task, completed: false });
-});
-
-app.put("/todos/:id", (req, res) => {
-  res.json({
-    id: Number(req.params.id),
-    task: req.body.task,
-    completed: req.body.completed,
-  });
-});
-
-app.delete("/todos/:id", (req, res) => {
-  res.json({ success: true });
-});
-
-// Start the server
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+    console.log(`Server has started on port: ${PORT}`)
+})
