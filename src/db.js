@@ -1,6 +1,5 @@
-
-import { DatabaseSync } from 'node:sqlite'
-const db = new DatabaseSync(':memory:')
+import Database from "better-sqlite3";
+const db = new Database(":memory:");
 
 // Execute SQL statements from strings
 db.exec(`
@@ -9,7 +8,7 @@ db.exec(`
         username TEXT UNIQUE,
         password TEXT
     )
-`)
+`);
 
 db.exec(`
     CREATE TABLE todos (
@@ -19,6 +18,6 @@ db.exec(`
         completed BOOLEAN DEFAULT 0,
         FOREIGN KEY(user_id) REFERENCES users(id)
     )    
-`)
+`);
 
-export default db
+export default db;

@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node --watch --env-file=.env --experimental-strip-types --experimental-sqlite ./src/server.js",
+    "dev": "node --watch --env-file=.env --experimental-strip-types ./src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,6 +13,7 @@
   "description": "Full Stack todo app that uses a Node.js backend, SQLite database, and JWT authentication.",
   "dependencies": {
     "bcryptjs": "^3.0.2",
+    "better-sqlite3": "^12.2.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2"
   }
